@@ -1,0 +1,33 @@
+asyncapi: 3.0.0
+info: { title: K11 Shop events, version: 1.0.0 }
+channels:
+  orderEvents:
+    address: orders.events
+    messages:
+      OrderCreated: { $ref: "#/components/messages/OrderCreated" }
+      StockReserved: { $ref: "#/components/messages/StockReserved" }
+components:
+  messages:
+    OrderCreated:
+      payload:
+        type: object
+        required: [type, eventId, orderId, sku, qty, at]
+        properties:
+          type: { const: OrderCreated }
+          eventId: { type: string }
+          orderId: { type: string }
+          sku: { type: string }
+          qty: { type: integer, minimum: 1 }
+          at: { type: string }
+        additionalProperties: false
+    StockReserved:
+      payload:
+        type: object
+        required: [type, eventId, orderId, sku, qty]
+        properties:
+          type: { const: StockReserved }
+          eventId: { type: string }
+          orderId: { type: string }
+          sku: { type: string }
+          qty: { type: integer, minimum: 1 }
+        additionalProperties: false

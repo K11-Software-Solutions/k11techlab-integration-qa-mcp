@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install -e ".[dev,kafka]"
+      - run: pytest -q -rs
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+
+  kafka:
+    # The same flows against a real Apache Kafka broker (KRaft, single node)
+    runs-on: ubuntu-latest
+    services:
+      kafka:
+        image: apache/kafka:3.9.1
+        ports: ["9092:9092"]
+        env:
+          KAFKA_NODE_ID: 1
+          KAFKA_PROCESS_ROLES: broker,controller
+          KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+          KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+          KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+          KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+          KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+          KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+          KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+          KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+          KAFKA_NUM_PARTITIONS: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev,kafka]"
+      - name: Wait for Kafka and create the topics
+        run: |
+          K="docker exec ${{ job.services.kafka.id }} /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092"
+          for i in $(seq 1 30); do $K --list >/dev/null 2>&1 && break; echo "waiting for Kafka"; sleep 2; done
+          for t in orders.events orders.commands orders.dlq; do $K --create --if-not-exists --topic $t --partitions 3; done
+          $K --list
+      - name: Tests against real Kafka
+        run: pytest -q -rs -k real_kafka
+        env:
+          KAFKA_BOOTSTRAP: localhost:9092
+          PYTHONDONTWRITEBYTECODE: "1"
+      - name: The CLI against the shop as a separate process
+        working-directory: demo/shop
+        env:
+          KAFKA_BOOTSTRAP: localhost:9092
+          SHOP_URL: http://127.0.0.1:8095
+        run: |
+          sed -i 's|main: { type: memory, name: shop }|main: { type: kafka, bootstrap: "${ENV:KAFKA_BOOTSTRAP}" }|' .qa-mcp/integration.yaml
+          python shop.py --port 8095 --kafka localhost:9092 > shop.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf $SHOP_URL/health && break; sleep 1; done
+          k11-integration-qa-mcp run
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: integration-report
+          path: demo/shop/.qa-mcp/integration-report/
+
+  plugin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: |
+          npm install -g @anthropic-ai/claude-code
+          claude plugin validate . --strict

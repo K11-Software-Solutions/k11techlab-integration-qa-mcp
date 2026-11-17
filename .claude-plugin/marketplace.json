@@ -1,0 +1,15 @@
+{
+  "name": "k11-integration-qa",
+  "description": "k11 Integration QA: API, Kafka, batch job and database flows tested together, with evidence for release decisions.",
+  "owner": {
+    "name": "K11 Software Solutions",
+    "url": "https://k11softwaresolutions.com"
+  },
+  "plugins": [
+    {
+      "name": "integration-qa",
+      "source": "./",
+      "description": "Flows across APIs, Kafka topics, batch jobs and databases, with AsyncAPI checks."
+    }
+  ]
+}

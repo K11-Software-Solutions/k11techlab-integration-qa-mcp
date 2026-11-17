@@ -1,0 +1,15 @@
+default_environment: local
+environments:
+  local:
+    base_url: "${ENV:SHOP_URL}"      # python demo/shop/shop.py prints it
+    auth: none
+  prod:
+    base_url: "${ENV:SHOP_URL}"      # same demo shop, named like production: publishing and jobs are refused
+    auth: none
+databases:
+  shop: { url: "sqlite:///shop.db", allow_writes: true }
+fixtures:
+  sku:                               # a fresh SKU per flow, so flows never share stock
+    db: shop
+    insert: { table: inventory, values: { sku: "SKU-${random_int}", stock: 10, reserved: 0 } }
+    delete: { table: inventory, where: { sku: "${sku}" } }

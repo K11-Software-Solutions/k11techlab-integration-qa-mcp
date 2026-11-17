@@ -1,0 +1,9 @@
+brokers:
+  main: { type: memory, name: shop }   # with Kafka: { type: kafka, bootstrap: "${ENV:KAFKA_BOOTSTRAP}" }
+jobs:
+  sku_totals:
+    command: [python, jobs/sku_totals.py]
+    env: { SHOP_DB: shop.db }
+    timeout: 60s
+asyncapi: asyncapi.yaml
+protected_topics: ["prod.*", "*.prod.*", "*production*"]

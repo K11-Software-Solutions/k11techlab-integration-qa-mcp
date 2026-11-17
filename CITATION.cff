@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata below."
+type: software
+title: "k11 Integration QA MCP Server"
+abstract: "MCP server and CI tool for integration testing of event-driven and batch systems as release evidence: flows that combine API calls, Apache Kafka messages (publish, expect with JSON-path matching and time limits, dead-letter queues, AsyncAPI payload checks), batch jobs and database checks, with guardrails that keep publishing and jobs on test environments."
+authors:
+  - family-names: "Jadhav"
+    given-names: "Kavita"
+    orcid: "https://orcid.org/0009-0009-8507-4976"
+    affiliation: "K11 Software Solutions"
+repository-code: "https://github.com/K11-Software-Solutions/k11techlab-integration-qa-mcp"
+url: "https://github.com/K11-Software-Solutions/k11techlab-integration-qa-mcp"
+license: MIT
+keywords:
+  - "integration testing"
+  - "Apache Kafka"
+  - "event-driven architecture"
+  - "AsyncAPI"
+  - "batch jobs"
+  - "database testing"
+  - "model context protocol"
+  - "quality engineering"
+references:
+  - type: article
+    title: "Autonomous CI/CD Quality Assurance Using LangGraph Multi-Agent Orchestration and Risk-Proportionate Human-in-the-Loop Control"
+    authors:
+      - family-names: "Jadhav"
+        given-names: "Kavita"
+        orcid: "https://orcid.org/0009-0009-8507-4976"
+    journal: "International Journal of Engineering and Computer Science"
+    year: 2026
+    doi: "10.18535/ijecs/v15i06.5563"

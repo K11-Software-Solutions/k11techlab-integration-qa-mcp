@@ -1,0 +1,22 @@
+{
+  "name": "integration-qa",
+  "version": "0.1.0",
+  "description": "Integration testing from Claude Code for event-driven and batch systems: flows that combine API calls, Kafka messages (publish, expect, dead-letter queues, AsyncAPI schemas), batch jobs and database checks, with evidence for release decisions.",
+  "author": {
+    "name": "Kavita A. Jadhav",
+    "url": "https://k11softwaresolutions.com"
+  },
+  "homepage": "https://github.com/K11-Software-Solutions/k11techlab-integration-qa-mcp",
+  "repository": "https://github.com/K11-Software-Solutions/k11techlab-integration-qa-mcp",
+  "license": "MIT",
+  "keywords": [
+    "integration-testing",
+    "kafka",
+    "event-driven",
+    "asyncapi",
+    "batch-jobs",
+    "middleware",
+    "qa",
+    "mcp"
+  ]
+}

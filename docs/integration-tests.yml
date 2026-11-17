@@ -1,0 +1,34 @@
+# Copy to .github/workflows/ in your service's repo. Starts Kafka and your services, runs the integration
+# flows in tests/integration/, and fails the pull request when a flow fails. The report is release evidence.
+name: Integration tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    services:
+      kafka:
+        image: apache/kafka:3.9.1
+        ports: ["9092:9092"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install "k11-integration-qa-mcp[kafka]"
+      - name: Start the services under test
+        run: echo "docker compose up -d orders-api inventory-consumer && ./scripts/wait-for-api.sh"
+      - name: Integration flows
+        run: k11-integration-qa-mcp run --env ci
+        env:
+          KAFKA_BOOTSTRAP: localhost:9092
+          API_URL: http://localhost:8080
+          TEST_DB_URL: ${{ secrets.TEST_DB_URL }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: integration-report
+          path: .qa-mcp/integration-report/

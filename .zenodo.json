@@ -1,0 +1,37 @@
+{
+  "title": "k11 Integration QA MCP Server",
+  "upload_type": "software",
+  "description": "<p>MCP server and CI tool for integration testing of event-driven and batch systems as release evidence: flows that combine API calls, Apache Kafka messages (publish, expect with JSON-path matching and time limits, dead-letter queues, AsyncAPI payload checks), batch jobs and database checks, with guardrails that keep publishing and jobs on test environments.</p><p>Source code: <a href=\"https://github.com/K11-Software-Solutions/k11techlab-integration-qa-mcp\">https://github.com/K11-Software-Solutions/k11techlab-integration-qa-mcp</a></p>",
+  "creators": [
+    {
+      "name": "Jadhav, Kavita",
+      "orcid": "0009-0009-8507-4976",
+      "affiliation": "K11 Software Solutions"
+    }
+  ],
+  "license": "MIT",
+  "access_right": "open",
+  "keywords": [
+    "integration testing",
+    "Apache Kafka",
+    "event-driven architecture",
+    "AsyncAPI",
+    "batch jobs",
+    "database testing",
+    "model context protocol",
+    "quality engineering"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/K11-Software-Solutions/k11techlab-integration-qa-mcp",
+      "relation": "isSupplementTo",
+      "resource_type": "software"
+    },
+    {
+      "identifier": "10.18535/ijecs/v15i06.5563",
+      "relation": "isSupplementTo",
+      "scheme": "doi",
+      "resource_type": "publication-article"
+    }
+  ]
+}
